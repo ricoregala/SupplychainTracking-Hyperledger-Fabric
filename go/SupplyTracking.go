@@ -35,7 +35,7 @@ import (
 	"strconv"
 	"time"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
-	"github.com/hyperledger/fabric/core/chaincode/lib/cid"
+	//"github.com/hyperledger/fabric/core/chaincode/lib/cid"
 	sc "github.com/hyperledger/fabric/protos/peer"
 )
 
@@ -94,9 +94,22 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 }
 
 func (s *SmartContract) queryCarsByOwner(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+	
+	//asdafdakfhsdkhfsdkjghsdjhsdkhjgsdkhgsaghkrhgwuirghwkrjghwrkugwkgjhalgjwegjkghjfdfhsklkhj
+	if len(args) < 1 {
+		return shim.Error("Incorrect number of arguments. Expecting 1")
+	}
 
-    //TODO Write approriate code here	
-	return shim.Success(nil)
+	owner := args[0]
+
+	queryString := fmt.Sprintf("{\"selector\":{\"owner\":\"%s\"}}", owner)
+
+	queryResults, err := getQueryResultForQueryString(APIstub, queryString)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	return shim.Success(queryResults)
+	//return shim.Success(nil)
 }
 
 func getQueryResultForQueryString(APIstub shim.ChaincodeStubInterface, queryString string) ([]byte, error) {
@@ -258,33 +271,21 @@ func (s *SmartContract) changeCarOwner(APIstub shim.ChaincodeStubInterface, args
 }
 
 func (s *SmartContract) changeCarColour(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+//Change Color :D xaxaxasxaxaxaxaxaxaxaxaxaxaxaxaxaxaxaxaxaxaxaxaxaxaxaxaxaxaxaxaxa
+	if len(args) != 2 {
+		return shim.Error("Incorrect number of arguments. Expecting 2")
+	}
+
+	carAsBytes, _ := APIstub.GetState(args[0])
+	car := Car{}
+
+	json.Unmarshal(carAsBytes, &car)
+	car.Colour = args[1]
+
+	carAsBytes, _ = json.Marshal(car)
+	APIstub.PutState(args[0], carAsBytes)
+//Change Color :D xaxaxasxaxaxaxaxaxaxaxaxaxaxaxaxaxaxaxaxaxaxaxaxaxaxaxaxaxaxaxaxa
 	return shim.Success(nil)
-}
-
-func (s *SmartContract) getUser(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
-
-	attr := args[0]
-	attrValue, _, _ := cid.GetAttributeValue(APIstub,attr)
-
-	msp, _ := cid.GetMSPID(APIstub)
-
-	var buffer bytes.Buffer
-		buffer.WriteString("{\"User\":")
-		buffer.WriteString("\"")
-		buffer.WriteString(attrValue)
-		buffer.WriteString("\"")
-
-		buffer.WriteString(", \"MSP\":")
-		buffer.WriteString("\"")
-
-		buffer.WriteString(msp)
-		buffer.WriteString("\"")
-
-		buffer.WriteString("}")
-	
-
-	return shim.Success(buffer.Bytes())
-
 }
 
 func (s *SmartContract) getHistoryForCar(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {

@@ -35,8 +35,11 @@ Output:
 </pre>
 2. Change Directory to `/supplytracking` 
   <br/>
-  2.a. Install Dependencies by executing the following command: `npm install` or `npm i`
-  2.b. 
+      * Install Dependencies by executing the following command: `npm install` or `npm i`
+      * Start the Fabric Network : `./startFabric.sh`
+      * Enroll the Admin to the Network : `node enrollAmin.js`
+      * Register the Users to the Network : `node registerUser.js`
+3. 
 
 ## License
 

@@ -8,11 +8,16 @@
 ## PreRequisites:
 1. Download github.com/ashtikuno/prerequisites.sh
 2. Install Go https://golang.org/doc/install
-3. Install cURL (sudo apt install curl -y)
-4. curl -sSL https://github.com/hyperledger/fabric/blob/release-1.4/scripts/bootstrap.sh | bash -s 1.4.0
+3. Install cURL (`sudo apt install curl -y`)
+4. `curl -sSL https://github.com/hyperledger/fabric/blob/release-1.4/scripts/bootstrap.sh | bash -s 1.4.0`
 5. This will download the needed binaries and then put it into the bin folder of the download path.
-6. Export the download path using: export PATH=<path to download location>/bin:$PATH
+6. Export the download path using: `export PATH=<path to download location>/bin:$PATH`
 
 ## Usage
-1. git clone https://github.com/ashtikuno/HyperledgerActivity-SupplyTracking.git
+1. `git clone https://github.com/ashtikuno/HyperledgerActivity-SupplyTracking.git`
 2. 
+
+## License
+
+Copyright (c) 2019 Rico Regala
+Licensed under the [Apache License 2.0](LICENSE)

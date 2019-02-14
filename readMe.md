@@ -41,6 +41,16 @@ Output:
 3. Open a REST Client like [Insomnia](https://insomnia.rest/), [Postman](https://www.getpostman.com/), or [Swagger](https://swagger.io/)
 4. Test the End Point at : `http://localhost:3000`
 
+## To Be Added:
+<pre>
+    ✔ Use of the Basic Network
+    ✔ Query information from the block
+    ✔ Update the block with new values
+    ✖ Transfer of Assets
+    ✖ n Number of USers
+</pre>
+
+
 ## License
 
 Copyright (c) 2019 Rico Regala

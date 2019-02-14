@@ -24,7 +24,6 @@ cd ../basic-network
 ./start.sh
 
 # Now launch the CLI container in order to install, instantiate chaincode
-# and prime the ledger with our 10 cars
 docker-compose -f ./docker-compose.yml up -d cli
 
 docker exec -e "CORE_PEER_LOCALMSPID=Org1MSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp" cli peer chaincode install -n supplytracking -v 1.0 -p "$CC_SRC_PATH" -l "$LANGUAGE"

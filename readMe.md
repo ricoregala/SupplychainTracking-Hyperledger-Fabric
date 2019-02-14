@@ -25,7 +25,7 @@
 </pre>
 
 ## Usage
-1. `git clone https://github.com/ashtikuno/HyperledgerActivity-SupplyTracking.git`
+* `git clone https://github.com/ashtikuno/HyperledgerActivity-SupplyTracking.git`
 <br/>
 Output:
 <pre>fabric-samples/
@@ -35,6 +35,8 @@ Output:
                         | ---- chaincode/supplytracking/go
                         | ---- supplytracking
 </pre>
+
+## Documentation
 
 ## License
 

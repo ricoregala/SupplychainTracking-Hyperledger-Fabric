@@ -13,4 +13,6 @@
 5. This will download the needed binaries and then put it into the bin folder of the download path.
 6. Export the download path using: export PATH=<path to download location>/bin:$PATH
 
-##
+## Usage
+1. git clone https://github.com/ashtikuno/HyperledgerActivity-SupplyTracking.git
+2. 

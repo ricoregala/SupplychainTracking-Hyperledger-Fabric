@@ -35,10 +35,10 @@ Output:
 </pre>
 2. Change Directory to `/supplytracking` 
   <br/>
-      * Install Dependencies by executing the following command: `npm install` or `npm i`
-      * Start the Fabric Network : `./startFabric.sh`
-      * Enroll the Admin to the Network : `node enrollAmin.js`
-      * Register the Users to the Network : `node registerUser.js`
+    * Install Dependencies by executing the following command: `npm install` or `npm i` 
+    * Start the Fabric Network : `./startFabric.sh`
+    * Enroll the Admin to the Network : `node enrollAmin.js`
+    * Register the Users to the Network : `node registerUser.js`
 3. Open a REST Client like [Insomnia](https://insomnia.rest/), [Postman](https://www.getpostman.com/), or [Swagger](https://swagger.io/)
 4. Test the End Point at : `http://localhost:3000`
 

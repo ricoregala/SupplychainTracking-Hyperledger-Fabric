@@ -6,7 +6,7 @@
 
 ### Hyperledger Fabric Version : 1.4
 
-#### Go Version : 1.10.4
+### Go Version : 1.10.4
 
 ## PreRequisites:
 
@@ -30,7 +30,6 @@
 
 1. `git clone https://github.com/ashtikuno/HyperledgerActivity-SupplyTracking.git`
 <br/><br/>
-
 Output:
 <pre>fabric-samples/
   | ---- invoiceHyperledgerActivity-SupplyTracking/
@@ -40,13 +39,13 @@ Output:
                         | ---- supplytracking
 </pre>
 
-1. Change Directory to `/supplytracking` 
+2. Change Directory to `/supplytracking` 
    * Install Dependencies by executing the following command: `npm install` or `npm i` 
    * Start the Fabric Network : `./startFabric.sh`
    * Enroll the Admin to the Network : `node enrollAmin.js`
    * Register the Users to the Network : `node registerUser.js`
-2. Open a REST Client like [Insomnia](https://insomnia.rest/) or [Postman](https://www.getpostman.com/)
-3. Test the End Point at : `http://localhost:3000`
+3. Open a REST Client like [Insomnia](https://insomnia.rest/) or [Postman](https://www.getpostman.com/)
+4. Test the End Point at : `http://localhost:3000`
 
 ## To Be Added:
 
@@ -56,6 +55,7 @@ Output:
     ✔ Update the block with new values
     ✖ Transfer of Assets
     ✖ n Number of USers
+    ✖ User Interface
 </pre>
 
 ## License

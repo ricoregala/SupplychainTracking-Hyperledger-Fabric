@@ -13,7 +13,9 @@
 1. Download github.com/ashtikuno/prerequisites.sh
 2. Install Go https://golang.org/doc/install
    * To check the where the Go Path, Go Root, and Go Cache is located, run: `go env`
-3. Install cURL: `sudo apt install curl -y`
+   * Based on the results of `go env`, export the Go path using  `export GOPATH=$HOME/go`
+   * Based on the results of `go env`, extend the shell search path for Go using: `export PATH=$PATH:$GOPATH/bin`
+3. Install curl: `sudo apt install curl -y`
 4. `curl -sSL https://github.com/hyperledger/fabric/blob/release-1.4/scripts/bootstrap.sh | bash -s 1.4.0`
 5. This will download the needed binaries and then put it into the bin folder of the download path.
 6. Export the download path using: `export PATH=<path to download location>/bin:$PATH`

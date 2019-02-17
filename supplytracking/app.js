@@ -13,14 +13,10 @@ channel.addPeer(peer);
 var order = fabric_client.newOrderer('grpc://localhost:7050')
 channel.addOrderer(order);
 
-
 //
 var store_path = path.join(__dirname, 'hfc-key-store');
 console.log('Store path:'+store_path);
 var tx_id = null;
-
-
-
 
 const express = require('express')
 const app = express()
@@ -31,82 +27,153 @@ const cors = require('cors')
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.get('/test', (req, res) => res.send('Hello World!'))
-
-
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
-app.all('/car', function(req, res){    
-
+app.all('/invoice', function(req, res){    
 
 // create the key value store as defined in the fabric-client/config/default.json 'key-value-store' setting
 Fabric_Client.newDefaultKeyValueStore({ path: store_path
 }).then((state_store) => {
 // assign the store to the fabric client
+
 fabric_client.setStateStore(state_store);
 var crypto_suite = Fabric_Client.newCryptoSuite();
+
 // use the same location for the state store (where the users' certificate are kept)
 // and the crypto store (where the users' keys are kept)
 var crypto_store = Fabric_Client.newCryptoKeyStore({path: store_path});
 crypto_suite.setCryptoKeyStore(crypto_store);
 fabric_client.setCryptoSuite(crypto_suite);
 
+
+var sUser = req.body.username;
+console.log(sUser);
 // get the enrolled user from persistence, this user will sign all requests
-return fabric_client.getUserContext('user1', true);
+return fabric_client.getUserContext(sUser, true);
 }).then((user_from_store) => {
+  console.log(user_from_store);
 if (user_from_store && user_from_store.isEnrolled()) {
-console.log('Successfully loaded user1 from persistence');
+console.log("Successfully loaded from persistence");
 member_user = user_from_store;
+console.log(member_user);
 } else {
-throw new Error('Failed to get user1.... run registerUser.js');
+  var sUser = req.body.username;
+  res.json(sUser + " is not registered to do this transaction");
+throw new Error( sUser + " is not registered to do this transaction");
 }
 
 // get a transaction id object based on the current user assigned to fabric client
 tx_id = fabric_client.newTransactionID();
 console.log("Assigning transaction_id: ", tx_id._transaction_id);
 
-// createCar chaincode function - requires 5 args, ex: args: ['CAR12', 'Honda', 'Accord', 'Black', 'Tom'],
-// changeCarOwner chaincode function - requires 2 args , ex: args: ['CAR10', 'Dave'],
-// must send the proposal to endorsing peers
 var request = {
-  chaincodeId: 'fabcar',
+  chaincodeId: 'invoice',
   chainId: 'mychannel',
   txId: tx_id
 };
 
-var newcar = [];
-var carid = req.body.carid;
-var make = req.body.make;
-var model = req.body.model;
-var color = req.body.color;
-var owner = req.body.owner;
-newcar.push(carid);
+var raiseinvoice = [];
+var invoiceid = req.body.invoiceid;
+var invoicenum = req.body.invoicenum;
+var billedto = req.body.billedto;
+var invoicedate = req.body.invoicedate;
+var invoiceamount = req.body.invoiceamount;
+var itemdescription = req.body.itemdescription;
+var gr = req.body.gr;
+var ispaid = req.body.ispaid;
+var paidamount = req.body.paidamount;
+var repaid = req.body.repaid;
+var repaymentamount = req.body.repaymentamount;
+
+raiseinvoice.push(invoiceid);
 if (req.method == "POST")
 {
-  request.fcn='createCar';
-  newcar.push(make);
-  newcar.push(model);
-  newcar.push(color);
-  newcar.push(owner); 
+  var sUser = req.body.username;
+  // Supplier is GameShopEx
+  // This will prevent other users to do this transaction
+  if(sUser != "GameShopEx" ){
+    res.json(sUser + " is not allowed to do this transaction");
+    throw new Error(sUser + " is not allowed to do this transaction");
+    }
+  else{
+    request.fcn='raiseInvoice';
+    raiseinvoice.push(invoicenum);
+    raiseinvoice.push(billedto);
+    raiseinvoice.push(invoicedate);
+    raiseinvoice.push(invoiceamount); 
+    raiseinvoice.push(itemdescription);
+    }
 }
+
 else if(req.method == "PUT")
 {
-    if(owner)    
+    if(gr)
     {
-        request.fcn= 'changeCarOwner',
-        newcar.push(owner);
+        // Zotac is the OEM(Original Equipment Manufacturer)
+        // This will prevent other users to do this transaction
+          var sUser = req.body.username;
+
+          if(sUser != "Zotac"){
+            res.json(sUser + " is not allowed to do this transaction");
+            throw new Error(sUser + " is not allowed to do this transaction");
+          }
+          else{
+            //UPDATE state if goods are received
+            //DEFAULT state is No
+            request.fcn= 'receivedGoods',
+            raiseinvoice.push(gr);
+          }
     }
     
-    else if(color)
+    else if(paidamount)
     {
-      //TODO START send appropriate attributes for car colour chnage
+          var sUser = req.body.username;
 
-      //TODO END send appropriate attributes for car colour chnage
+          // Unionbank is the lender bank
+          // This will prevent other users to do this transaction
+          if(sUser != "Unionbank"){
+            res.json(sUser + " is not allowed to do this transaction");
+            throw new Error(sUser + " is not allowed to do this transaction");
+          }
+
+          else{
+            //UPDATE state if the bank already paid the supplier
+            //DEFAULT state is No
+            request.fcn= 'paymentToSupplier',
+            raiseinvoice.push(paidamount);
+          }
+    }
+
+    else if(repaymentamount)
+    {
+        var sUser = req.body.username;
+
+
+        if(sUser != ("Zotac" || "EVGA")){
+          // Zotac, EVGA are OEMs
+          // This will prevent other users to do this transaction
+          res.json(sUser + " is not allowed to do this transaction");
+          throw new Error(sUser + " is not allowed to do this transaction");
+        }
+
+        else{
+          
+          //UPDATE state if OEM already repaid the bank
+          //DEFAULT state is No
+          request.fcn= 'paymentToBank',
+          raiseinvoice.push(repaymentamount);
+        }
     }
 }
 
-
-request.args=newcar;
+request.args=raiseinvoice;
 console.log(request);
+// // return 
+res.json({
+  Function: request.fcn,
+  Inputs: request.args,
+  Result: "Success"
+});
 
 // send the transaction proposal to the peers
 return channel.sendTransactionProposal(request);
@@ -195,12 +262,12 @@ console.error('Failed to order the transaction. Error code: ' + results[0].statu
 
 if(results && results[1] && results[1].event_status === 'VALID') {
 console.log('Successfully committed the change to the ledger by the peer');
-                res.json({'result': 'success'});
+                // res.json({'result': 'success'});
 } else {
 console.log('Transaction failed to be committed to the ledger due to ::'+results[1].event_status);
 }
 }).catch((err) => {
-console.error('Failed to invoke successfully :: ' + err);
+console.error('Failed to invoke :: ' + err);
 });
 
 
@@ -208,14 +275,14 @@ console.error('Failed to invoke successfully :: ' + err);
 
 app.get('/', function (req, res) {
 
-
-
 // create the key value store as defined in the fabric-client/config/default.json 'key-value-store' setting
 Fabric_Client.newDefaultKeyValueStore({ path: store_path
 }).then((state_store) => {
+
 // assign the store to the fabric client
 fabric_client.setStateStore(state_store);
 var crypto_suite = Fabric_Client.newCryptoSuite();
+
 // use the same location for the state store (where the users' certificate are kept)
 // and the crypto store (where the users' keys are kept)
 var crypto_store = Fabric_Client.newCryptoKeyStore({path: store_path});
@@ -223,49 +290,49 @@ crypto_suite.setCryptoKeyStore(crypto_store);
 fabric_client.setCryptoSuite(crypto_suite);
 
 // get the enrolled user from persistence, this user will sign all requests
-return fabric_client.getUserContext('user1', true);
+var sUser = req.body.username;
+console.log(sUser);
+
+return fabric_client.getUserContext(sUser, true);
 }).then((user_from_store) => {
+  console.log(user_from_store);
 if (user_from_store && user_from_store.isEnrolled()) {
-console.log('Successfully loaded user1 from persistence');
+//console.log("Successfully loaded " + sUser +" from persistence");
 member_user = user_from_store;
 } else {
-throw new Error('Failed to get user1.... run registerUser.js');
+  var sUser = req.body.username;
+  res.json(sUser + " is not registered to do this transaction");
+throw new Error(sUser + "  is not registered to do this transaction");
 }
 
-// queryCar chaincode function - requires 1 argument, ex: args: ['CAR4'],
-// queryAllCars chaincode function - requires no arguments , ex: args: [''],
+// displayAllInvoices chaincode function - requires no arguments , ex: args: [''],
 const request = {
+
 //targets : --- letting this default to the peers assigned to the channel
-chaincodeId: 'fabcar',
-fcn: 'queryAllCars',
+chaincodeId: 'invoice',
+fcn: 'displayAllInvoices',
 args: ['']
 };
 
-
 var ar = [];
-var owner = req.query.owner;
-var car = req.query.car;
 var attr = req.query.attr;
+var invoice = req.query.invoice;
 
-if (owner)
-{
-  //TODO START send appropriate attributes to query Cars by owner Rich Query
+if (attr){
   
-  
-  //TODO END send appropriate attributes to query Cars by owner Rich Query
-}
-else if (car)
-{
-  ar.push(car);
-  request.fcn='getHistoryForCar';
-  request.args = ar;
-}
-else if (attr)
-{
   ar.push(attr);
   request.fcn='getUser';
   request.args = ar;
 }
+
+else if (invoice)
+{
+  ar.push(invoice);
+  request.fcn='getInvoiceAuditHistory';
+  request.args = ar;
+}
+
+
 
 
 // send the query proposal to the peer
@@ -286,19 +353,11 @@ console.log("No payloads were returned from query");
 }).catch((err) => {
 console.error('Failed to query successfully :: ' + err);
 });
-
-
-
-
 })
-
-
-//const block = channel.queryInfo(peer,false);
-//console.log("height:"+block.height);
 
 app.get('/block', function (req, res) {
 
-
+  var sUser = req.body.username;
   // create the key value store as defined in the fabric-client/config/default.json 'key-value-store' setting
   Fabric_Client.newDefaultKeyValueStore({ path: store_path
   }).then((state_store) => {
@@ -312,13 +371,14 @@ app.get('/block', function (req, res) {
   fabric_client.setCryptoSuite(crypto_suite);
   
   // get the enrolled user from persistence, this user will sign all requests
-  return fabric_client.getUserContext('user1', true);
+  return fabric_client.getUserContext(sUser, true);
   }).then((user_from_store) => {
+    console.log(user_from_store);
   if (user_from_store && user_from_store.isEnrolled()) {
-  console.log('Successfully loaded user1 from persistence');
+  console.log("Successfully loaded" + sUser + "from persistence");
   member_user = user_from_store;
   } else {
-  throw new Error('Failed to get user1.... run registerUser.js');
+  throw new Error("Failed to get run registerUser.js");
   }
 
   
@@ -331,11 +391,7 @@ app.get('/block', function (req, res) {
     let payload = block.data.data[0].payload.data.actions[0].payload.action.proposal_response_payload.extension.results.ns_rwset[0].rwset.writes[0];
     res.send(payload);      
   });
-  
-
   });
-
-
 
   function unicodeToChar(text) {
     return text.replace(/\\u[\dA-F]{4}/gi, 
@@ -343,8 +399,3 @@ app.get('/block', function (req, res) {
                 return String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16));
            });
  }
-  
-
-
-  
-  

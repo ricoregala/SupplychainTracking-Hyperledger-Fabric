@@ -1,4 +1,4 @@
-# Hyperledger Fabric Supply Tracking Activity
+# Hyperledger Fabric Supply Chain Tracking Activity
 
 ## Development Environment:
 

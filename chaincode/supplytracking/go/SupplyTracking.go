@@ -378,6 +378,6 @@ func main() {
  Hyperledger Project : https://github.com/hyperledger/fabric-samples
  Jenrielle Gaon : https://github.com/jenriellegaon
  Ron Vincent Exconde
- John Carlo Cuya : https://github.com/JoshuaCaramancion
+ John Carlo Cuya : https://github.com/jccuya123
  Joshua Caramancion : https://github.com/JoshuaCaramancion
 */

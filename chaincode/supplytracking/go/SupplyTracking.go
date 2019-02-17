@@ -286,7 +286,7 @@ func (s *SmartContract) isPaidToBank(APIstub shim.ChaincodeStubInterface, args [
 	return shim.Success(nil)
 }
 
-// User
+// getUser
 func (s *SmartContract) getUser(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 	/*
 	 attr := args[0]
